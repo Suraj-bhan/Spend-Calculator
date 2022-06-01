@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import Header from '../components/header/index'
 import SideBar from '../components/sidebar/index'
 
@@ -12,9 +11,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className=''>
+      <main className='h-full'>
         <Header/>
-        <div>
+        <div className='h-full'>
           <SideBar/>
         </div>
       </main>
