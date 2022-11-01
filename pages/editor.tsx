@@ -7,9 +7,9 @@ export default function Editor() {
   return (
     <>
       <div className="h-screen bg-gray-100">
-        <main className="h-5/6">
+        <main className="h-full">
           <Header />
-          <div className="h-full flex">
+          <div className="h-auto flex">
             <SideBar />
             <EditorPanel />
           </div>
