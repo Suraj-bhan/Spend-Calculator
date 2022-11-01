@@ -75,7 +75,7 @@ const DashboardContainer = () => {
   ];
 
   return (
-    <div className="m-4">
+    <div className="m-5">
       {JSON.stringify(data)}
       <Table dataSource={data} columns={columns} />
     </div>
