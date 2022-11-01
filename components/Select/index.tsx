@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Input, Select, Space, Button } from 'antd';
@@ -11,26 +11,42 @@ let index = 0;
 interface SelectComponentProps {
   options: string[];
   onChange: (value: string) => void;
+  handleItemAdd?: (value: string) => void;
   value: string;
 }
 
 const SelectComponent: React.FC = ({
   options,
   onChange,
+  handleItemAdd,
   value,
 }: SelectComponentProps) => {
-  const [items, setItems] = useState([...options]);
-  const [localValue, setLocalValue] = useState(value);
+  const [items, setItems] = useState([]);
+  const [localValue, setLocalValue] = useState('');
   const inputRef = useRef<InputRef>(null);
+
+  useEffect(() => {
+    setItems([...options]);
+  }, [options]);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocalValue(event.target.value);
     onChange(event.target.value);
   };
 
+  const handleValueChange = (value) => {
+    console.log(value);
+    onChange(value);
+  };
+
   const addItem = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setItems([...items, localValue || `New item ${index++}`]);
+    handleItemAdd(localValue);
     setLocalValue('');
     setTimeout(() => {
       inputRef.current?.focus();
@@ -41,7 +57,8 @@ const SelectComponent: React.FC = ({
     <Select
       size="large"
       // placeholder="debit/credit"
-      value={value}
+      value={localValue as any}
+      onChange={handleValueChange}
       dropdownRender={(menu) => (
         <>
           {menu}
@@ -50,7 +67,7 @@ const SelectComponent: React.FC = ({
             <Input
               placeholder="Please enter item"
               ref={inputRef}
-              value={''}
+              value={localValue}
               onChange={onNameChange}
             />
             <Button type="text" icon={<PlusOutlined />} onClick={addItem}>

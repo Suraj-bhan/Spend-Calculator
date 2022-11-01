@@ -1,54 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import SelectComponent from '../Select/index';
 import moment from 'moment';
 import { Button } from 'antd';
 import { message } from 'antd';
+import db from '../../Firebase';
 
 export default function EditorPanel() {
-  const [typeOptions, setTypeOfOptions] = useState<string[]>([
-    'Debit',
-    'Credit',
-  ]);
+  const [typeOptions, setTypeOfOptions] = useState<string[]>([]);
   const [type, setType] = useState('Debit');
-
-  const [mediumOptions, setMediumOptions] = useState<string[]>([
-    'PhonePay',
-    'G-Pay',
-    'PayTm',
-    'FiPay',
-    'SlicePay',
-    'Slice',
-    'Fi',
-    'Sbi',
-    'Atm',
-    'Purse',
-    'Wazirx',
-    'Binance',
-    'Groww',
-  ]);
+  const [mediumOptions, setMediumOptions] = useState<string[]>([]);
   const [medium, setMedium] = useState('PayTm');
-
-  const [mediumCategoryOptions, setMediumCategoryOptions] = useState<string[]>([
-    'Card',
-    'UPI',
-    'Cash',
-  ]);
+  const [mediumCategoryOptions, setMediumCategoryOptions] = useState<string[]>(
+    [],
+  );
   const [mediumCategory, setMediumCategory] = useState('UPI');
-
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([
-    'Grocery',
-    'Food',
-    'HouseHold',
-    'Fashion',
-    'Entertainment',
-    'Travel',
-    'Gifts',
-    'Family',
-    'Investment',
-    'Borrow',
-    'Land',
-  ]);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [category, setCategory] = useState('Food');
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
   const [time, setTime] = useState(moment().format('HH:mm'));
@@ -59,20 +26,65 @@ export default function EditorPanel() {
   const [sharedWith, setSharedWith] = useState('');
   const [sharePercent, setSharePercent] = useState(0);
 
+  useEffect(() => {
+    db.collection('type').onSnapshot((snapshot) =>
+      setTypeOfOptions(snapshot.docs.map((doc) => doc.data().value)),
+    );
+    db.collection('mediumCategory').onSnapshot((snapshot) =>
+      setMediumCategoryOptions(snapshot.docs.map((doc) => doc.data().value)),
+    );
+    db.collection('category').onSnapshot((snapshot) =>
+      setCategoryOptions(snapshot.docs.map((doc) => doc.data().value)),
+    );
+  }, []);
+
+  useEffect(() => {
+    db.collection('medium')
+      .where('parent', '==', mediumCategory)
+      .onSnapshot((snapshot) =>
+        setMediumOptions(snapshot.docs.map((doc) => doc.data().value)),
+      );
+  }, [mediumCategory]);
+
   const handleTypeChange = (value: string) => {
     setType(value);
+  };
+
+  const handleTypeAdd = (value: string) => {
+    db.collection('type').add({
+      value,
+    });
   };
 
   const handleMediumChange = (value: string) => {
     setMedium(value);
   };
 
+  const handleMediumAdd = (value: string) => {
+    db.collection('medium').add({
+      value,
+      parent: mediumCategory,
+    });
+  };
+
   const handleMediumCategoryChange = (value: string) => {
     setMediumCategory(value);
   };
 
+  const handleMediumCategoryAdd = (value: string) => {
+    db.collection('mediumCategory').add({
+      value,
+    });
+  };
+
   const handleCategoryChange = (value: string) => {
     setCategory(value);
+  };
+
+  const handleCategoryAdd = (value: string) => {
+    db.collection('category').add({
+      value,
+    });
   };
 
   const handleDateChange = (e) => {
@@ -107,8 +119,12 @@ export default function EditorPanel() {
     setSharePercent(e.target.value);
   };
 
-  const info = (text) => {
+  const error = (text) => {
     message.error(text);
+  };
+
+  const success = (text) => {
+    message.success(text);
   };
 
   const handleSubmit = () => {
@@ -127,14 +143,22 @@ export default function EditorPanel() {
       sharedWith,
     };
     if (reason === '') {
-      info('Reason Can not be empty.');
+      error('Reason Can not be empty.');
     } else if (amount === 0) {
-      info('Amount can not be zero.');
+      error('Amount can not be zero.');
     } else if (receiver === '') {
-      info('Receiver Can not be empty.');
+      error('Receiver Can not be empty.');
     } else if (sharedWith !== '' && sharePercent === 0) {
-      info('Shared Percent Can not be zero.');
-    } else console.log(data);
+      error('Shared Percent Can not be zero.');
+    } else {
+      db.collection('transactions').add({
+        ...data,
+      });
+      success('Transaction added successfully');
+      setAmount(0);
+      setReceiver('');
+      setReason('');
+    }
   };
 
   return (
@@ -144,7 +168,9 @@ export default function EditorPanel() {
           Type
         </span>
         <SelectComponent
+          key="type"
           options={typeOptions}
+          handleItemAdd={handleTypeAdd}
           onChange={handleTypeChange}
           value={type}
         />
@@ -155,6 +181,7 @@ export default function EditorPanel() {
         </span>
         <SelectComponent
           options={categoryOptions}
+          handleItemAdd={handleCategoryAdd}
           onChange={handleCategoryChange}
           value={category}
         />
@@ -191,6 +218,7 @@ export default function EditorPanel() {
         </span>
         <SelectComponent
           options={mediumCategoryOptions}
+          handleItemAdd={handleMediumCategoryAdd}
           onChange={handleMediumCategoryChange}
           value={mediumCategory}
         />
@@ -202,6 +230,7 @@ export default function EditorPanel() {
         </span>
         <SelectComponent
           options={mediumOptions}
+          handleItemAdd={handleMediumAdd}
           onChange={handleMediumChange}
           value={medium}
         />

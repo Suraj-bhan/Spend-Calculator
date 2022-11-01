@@ -1,7 +1,7 @@
-import EditorPanel from '../components/editorpanel/index';
 import Header from '../components/header/index';
 import SideBar from '../components/sidebar/index';
 import React from 'react';
+import DashboardContainer from '../components/DashboardContainer';
 
 export default function Dashboard() {
   return (
@@ -13,7 +13,8 @@ export default function Dashboard() {
             <div className="hidden md:flex">
               <SideBar />
             </div>
-            <EditorPanel />
+            {/* <EditorPanel /> */}
+            <DashboardContainer />
           </div>
         </main>
       </div>

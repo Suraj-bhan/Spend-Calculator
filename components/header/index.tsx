@@ -15,7 +15,7 @@ export default function Header() {
   };
   return (
     <div className="shadow-md bg-white h-16 flex justify-between">
-      <div className="self-center pl-8">
+      <div className="md:hidden self-center pl-8">
         <MenuOutlined onClick={handleOpenDrawer} />
       </div>
       <MenuDrawer open={openDrawer} onClose={handleCloseDrawer} />
