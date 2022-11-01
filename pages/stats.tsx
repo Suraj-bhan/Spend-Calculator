@@ -3,7 +3,7 @@ import Header from '../components/header/index';
 import SideBar from '../components/sidebar/index';
 import React from 'react';
 
-export default function Editor() {
+export default function Stats() {
   return (
     <>
       <div className="h-screen bg-gray-100">

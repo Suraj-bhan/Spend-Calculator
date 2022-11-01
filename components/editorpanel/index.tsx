@@ -284,7 +284,7 @@ export default function EditorPanel() {
           className="bg-gray-200 rounded-md p-4"
         />
       </div>
-      <div className="flex gap-x-4 justify-center mt-4">
+      <div className="flex gap-x-4 justify-center md:justify-start mt-4">
         <Button type="primary" onClick={handleSubmit}>
           Submit
         </Button>
