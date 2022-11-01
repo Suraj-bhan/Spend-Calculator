@@ -7,7 +7,7 @@ interface MenuDrawerProps {
   onClose: () => void;
 }
 
-const MenuDrawer: React.FC = ({ open, onClose }: MenuDrawerProps) => {
+const MenuDrawer = ({ open, onClose }: MenuDrawerProps) => {
   const handleClose = () => {
     onClose();
   };

@@ -15,7 +15,7 @@ interface SelectComponentProps {
   value: string;
 }
 
-const SelectComponent: React.FC = ({
+const SelectComponent = ({
   options,
   onChange,
   handleItemAdd,
