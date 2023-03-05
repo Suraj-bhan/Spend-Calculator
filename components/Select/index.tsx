@@ -39,7 +39,6 @@ const SelectComponent = ({
   };
 
   const handleValueChange = (value) => {
-    console.log(value);
     onChange(value);
   };
 

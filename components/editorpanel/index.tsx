@@ -141,6 +141,7 @@ export default function EditorPanel() {
       tax,
       sharePercent,
       sharedWith,
+      createdAt: new Date(),
     };
     if (reason === '') {
       error('Reason Can not be empty.');
